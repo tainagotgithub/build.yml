@@ -1,0 +1,35 @@
+kind: pipeline
+type: docker
+name: build-test01
+demands: npm
+
+trigger:
+  branches:
+    include:
+      - main
+
+steps: 
+  - task: YarnInstaller@3
+   displayName: "use yarn 1.x"
+  
+  - task: Yarn@2
+   displayName: "install yarn dependencies"
+
+  - task: Yarn@2
+    displayName: "yarn build"
+    inputs: 
+      Arguments: build
+    
+  - task: Yarn@2
+    displayName: "yarn export"
+    inputs: 
+      Arguments: export
+
+  - task: ArchieveFiles@2
+    displayName: "archieve out"
+    inputs: 
+      rootFolderOrFile: out
+      includeRootFolder: false
+  
+  - task: PublishArtifacts@1
+    displayName: "drop"
